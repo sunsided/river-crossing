@@ -1,6 +1,6 @@
 /// Describes the lineage of a world state.
 #[derive(Clone)]
-pub(crate) struct Lineage<S, A> {
+pub struct Lineage<S, A> {
     /// The ID of the current state.
     pub id: usize,
     /// The ID of the parent state.
@@ -13,7 +13,7 @@ pub(crate) struct Lineage<S, A> {
 }
 
 /// Tracks the history of world states.
-pub(crate) struct History<S, A>(Vec<Lineage<S, A>>);
+pub struct History<S, A>(Vec<Lineage<S, A>>);
 
 impl<S, A> Lineage<S, A> {
     /// Creates a new lineage for the given state.

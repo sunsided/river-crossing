@@ -2,11 +2,11 @@ use std::collections::VecDeque;
 
 /// A last in, first out structure, i.e. a stack.
 #[derive(Debug)]
-pub(crate) struct Lifo<T>(Vec<T>);
+pub struct Lifo<T>(Vec<T>);
 
 /// A first in, first out structure, i.e. a queue.
 #[derive(Debug)]
-pub(crate) struct Fifo<T>(VecDeque<T>);
+pub struct Fifo<T>(VecDeque<T>);
 
 #[allow(dead_code)]
 impl<T> Lifo<T> {
