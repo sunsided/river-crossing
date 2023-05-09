@@ -1,4 +1,4 @@
-use crate::{Action, RiverBank, WorldState};
+use crate::{RiverBank, WorldAction, WorldState};
 
 /// Pretty-prints a world state.
 pub(crate) fn pretty_print_state(state: &WorldState) -> String {
@@ -45,7 +45,7 @@ pub(crate) fn pretty_print_state(state: &WorldState) -> String {
 }
 
 /// Pretty-prints an action
-pub(crate) fn pretty_print_action(action: &Action, state: &WorldState) -> String {
+pub(crate) fn pretty_print_action(action: &WorldAction, state: &WorldState) -> String {
     let mut buffer = String::from("         ");
     if state.boat == RiverBank::Left {
         buffer.push_str("← ");
