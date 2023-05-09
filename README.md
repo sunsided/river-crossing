@@ -12,9 +12,8 @@ The problem statement, paraphrasing Wikipedia, is this:
 > (if they were, the zombies would eat the humans).
 > The boat cannot cross the river by itself with no people on board.
 
-See [`humans_and_zombies.rs`](src/humans_and_zombies.rs) for the problem-specific
-implementations and [`main.rs`](src/main.rs) for the search-specific implementations 
-or simply run `cargo run` and observe a solution:
+See [`humans_and_zombies.rs`](src/humans_and_zombies.rs) for the problem specifics
+and [`search.rs`](src/search.rs) for the search specifics or simply run `cargo run` and observe a solution:
 
 ```
   HHH ZZZ |B~~~|
