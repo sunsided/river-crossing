@@ -1,7 +1,7 @@
 # Toy Planning: "Humans and Zombies"
 
 An implementation of search-based planning using the Humans and Zombies problem,
-a version of the river crossing problem without the racism of "[Missionaries and Cannibals]"
+a version of the [river crossing] problem without the racism of "[Missionaries and Cannibals]"
 and the sexism of "Jealous Husbands".
 
 The problem statement, paraphrasing Wikipedia, is this:
@@ -43,4 +43,5 @@ Hit `cargo run` and observe a solution:
 Result plans differ depending on whether a depth-first (LIFO) or
 breadth-first (FIFO) search is used.
 
+[River crossing]: https://en.wikipedia.org/wiki/River_crossing_puzzle
 [Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem
