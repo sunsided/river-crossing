@@ -12,4 +12,32 @@ The problem statement, paraphrasing Wikipedia, is this:
 > (if they were, the zombies would eat the humans).
 > The boat cannot cross the river by itself with no people on board.
 
+Hit `cargo run` and observe a solution:
+
+```
+  HHH ZZZ |B~~~|
+           ZZ →
+    HHH Z |~~~B| ZZ
+           ← Z
+   HHH ZZ |B~~~| Z
+           ZZ →
+      HHH |~~~B| ZZZ
+           ← Z
+    HHH Z |B~~~| ZZ
+           HH →
+      H Z |~~~B| HH ZZ
+           ← H Z
+    HH ZZ |B~~~| H Z
+           HH →
+       ZZ |~~~B| HHH Z
+           ← Z
+      ZZZ |B~~~| HHH
+           ZZ →
+        Z |~~~B| HHH ZZ
+           ← H
+      H Z |B~~~| HH ZZ
+           H Z →
+          |~~~B| HHH ZZZ
+```
+
 [Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_zombies_problem

@@ -1,3 +1,7 @@
+mod pretty_print;
+
+use crate::pretty_print::{pretty_print_action, pretty_print_state};
+use colored::Colorize;
 use std::collections::{HashSet, VecDeque};
 use std::fmt::{Debug, Formatter};
 
@@ -388,6 +392,7 @@ fn apply_action(action: &Action, state: &WorldState) -> WorldState {
     state
 }
 
+/// Searches the state space for a plan.
 fn search() -> Option<impl Iterator<Item = (Option<Action>, WorldState)>> {
     let initial_state = WorldState::default();
 
@@ -424,13 +429,13 @@ fn search() -> Option<impl Iterator<Item = (Option<Action>, WorldState)>> {
 
 fn main() {
     if let Some(history) = search() {
-        println!("Found solution.");
+        println!("\nSolution:\n");
         for (action, state) in history {
             if let Some(action) = action {
-                println!("  {:?} => {:?}", action, state);
-            } else {
-                println!("  {:?}", state);
+                println!("  {}", pretty_print_action(&action, &state).yellow());
             }
+
+            println!("  {}", pretty_print_state(&state));
         }
     } else {
         eprintln!("No solution found.");
