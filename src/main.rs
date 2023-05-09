@@ -42,11 +42,10 @@ trait Action {
 
 /// Expands the world state into new (applicable) actions.
 /// If this state cannot be expanded, an empty vector is returned.
-fn expand<S: State<Action = A> + Debug, A: Action<State = S> + Debug>(
-    state: &S,
-    observed: &mut HashSet<S::Hash>,
-) -> Vec<(A, S)>
+fn expand<S, A>(state: &S, observed: &mut HashSet<S::Hash>) -> Vec<(A, S)>
 where
+    S: State<Action = A> + Debug,
+    A: Action<State = S> + Debug,
     S::Hash: Eq + std::hash::Hash,
 {
     let mut states = Vec::with_capacity(3);
