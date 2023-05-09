@@ -401,7 +401,7 @@ fn search() -> Option<impl Iterator<Item = (Option<Action>, WorldState)>> {
     let mut history = History::new();
     let lineage = history.create_root(initial_state.clone());
 
-    let mut fringe = Fifo::from(lineage);
+    let mut fringe = Lifo::from(lineage);
     while let Some(lineage) = fringe.pop() {
         let state = &lineage.state;
         println!("Exploring state {}: {:?}", lineage.id, state);

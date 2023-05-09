@@ -40,4 +40,7 @@ Hit `cargo run` and observe a solution:
           |~~~B| HHH ZZZ
 ```
 
-[Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_zombies_problem
+Result plans differ depending on whether a depth-first (LIFO) or
+breadth-first (FIFO) search is used.
+
+[Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem
