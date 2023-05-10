@@ -5,7 +5,8 @@ _Nᴏᴡ ᴡɪᴛʜ x﹪ ᴍᴏʀᴇ ᴢᴏᴍʙɪᴇs ᴀɴᴅ ʙʀɪᴅɢᴇs�
 
 Implementation(s) of search-based planning on the [river crossing] type of ~~toy problems~~ puzzles.
 Since this is really just a playground, the found solutions are not necessarily optimal,
-i.e. shorter or more efficient paths may exist.
+i.e. shorter or more efficient paths may exist. The core state-space search logic is implemented in
+[`search.rs`](src/search.rs).
 
 ## 🌉+🔦 — The Bridge and Torch Problem
 
