@@ -168,24 +168,17 @@ impl State for WorldState {
         let mut actions = Vec::with_capacity(5);
 
         let bank = self.boat_bank();
-        for h in 1..=bank.humans.min(self.boat.capacity) {
-            let action = WorldAction::new(h, 0);
-            if action.is_applicable(self) {
-                actions.push(action);
-            }
-        }
 
-        for z in 1..=bank.zombies.min(self.boat.capacity) {
-            let action = WorldAction::new(0, z);
-            if action.is_applicable(self) {
-                actions.push(action);
-            }
-        }
+        for z in 0..=self.boat.capacity.min(bank.zombies) {
+            'h: for h in 0..=self.boat.capacity.min(bank.humans) {
+                // At least one person needs to be on the boat.
+                if h + z == 0 {
+                    continue;
+                }
 
-        for h in 1..=self.boat.capacity.min(bank.humans) {
-            'z: for z in 1..=self.boat.capacity.min(bank.zombies) {
+                // ... but never more than the boat can carry.
                 if h + z > self.boat.capacity {
-                    break 'z;
+                    break 'h;
                 }
 
                 let action = WorldAction::new(h, z);
