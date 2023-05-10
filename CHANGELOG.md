@@ -8,6 +8,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Added command-line arguments to application.
+- Added the Bridge and Torch problem via the `bridge-and-torch` subcommand.
 
 ### Changed
 

@@ -1,11 +1,14 @@
-# Toy Planning: "Humans and Zombies"
-_Nᴏᴡ ᴡɪᴛʜ x﹪ ᴍᴏʀᴇ ᴢᴏᴍʙɪᴇs﹗_
+# Toy Planning: River Crossing
+_Nᴏᴡ ᴡɪᴛʜ x﹪ ᴍᴏʀᴇ ᴢᴏᴍʙɪᴇs ᴀɴᴅ ʙʀɪᴅɢᴇs﹗_
 
 ---
 
-An implementation of search-based planning using the Humans and Zombies problem,
-a version of the [river crossing] problem without the racism of "[Missionaries and Cannibals]"
-and the sexism of "Jealous Husbands".
+Implementation of search-based planning on the [river crossing] type of ~~toy problems~~  puzzles.
+
+## Humans and Zombies
+
+This is the Humans and Zombies problem, a classic version of the river crossing problem without
+the racism of "[Missionaries and Cannibals]" and the sexism of "Jealous Husbands".
 
 The problem statement, paraphrasing Wikipedia, is this:
 
@@ -65,5 +68,41 @@ Which prints a plan like:
 Result plans differ depending on whether a depth-first (LIFO) or
 breadth-first (FIFO) search is used.
 
+## Bridge and Torch
+
+The [Bridge and Torch] problem works as follows:
+
+> Four people come to a river in the night. There is a narrow bridge, but it can only
+> hold two people at a time. They have one torch and, because it's night, the torch has
+> to be used when crossing the bridge.
+> 
+> Person A can cross the bridge in 1 minute, B in 2 minutes, C in 5 minutes, and D in 8 minutes.
+> When two people cross the bridge together, they must move at the slower person's pace.
+> 
+> The question is, can they all get across the bridge if the torch lasts only 15 minutes?
+
+To solve the problem, run:
+
+```
+cargo run -- bridge-and-torch
+```
+
+It prints a solution like the following:
+
+```
+  At 0 minutes: [<1>, <2>, <5>, <8>] on the left, nobody on the right
+   → [<1>, <2>] cross forward, taking 2 minutes
+  At 2 minutes: [<5>, <8>] on the left, [<1>, <2>] on the right
+   ← [<1>] returns, taking 1 minute
+  At 3 minutes: [<5>, <8>, <1>] on the left, [<2>] on the right
+   → [<5>, <8>] cross forward, taking 8 minutes
+  At 11 minutes: [<1>] on the left, [<2>, <5>, <8>] on the right
+   ← [<2>] returns, taking 2 minutes
+  At 13 minutes: [<1>, <2>] on the left, [<5>, <8>] on the right
+   → [<1>, <2>] cross forward, taking 2 minutes
+  At 15 minutes: nobody on the left, [<5>, <8>, <1>, <2>] on the right
+```
+
 [River crossing]: https://en.wikipedia.org/wiki/River_crossing_puzzle
 [Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem
+[Bridge and Torch]: https://en.wikipedia.org/wiki/Bridge_and_torch_problem

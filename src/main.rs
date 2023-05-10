@@ -1,3 +1,4 @@
+mod bridge_and_torch;
 mod history;
 mod humans_and_zombies;
 mod pretty_print;
@@ -14,6 +15,7 @@ use std::hash::Hash;
 fn main() {
     let solver = match get_matches().subcommand() {
         Some(("humans-and-zombies", matches)) => run_problem(humans_and_zombies(matches)),
+        Some(("bridge-and-torch", matches)) => run_problem(bridge_and_torch(matches)),
         _ => unreachable!("Unhandled subcommand"),
     };
 
@@ -51,40 +53,44 @@ where
 fn get_matches() -> ArgMatches {
     let command = Command::new("toy-planning")
         .subcommand_required(true)
-        .subcommands([Command::new("humans-and-zombies")
-            .arg(
-                Arg::new("humans")
-                    .short('H')
-                    .long("humans")
-                    .help("The number of humans on the river bank")
-                    .default_value("3")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )
-            .arg(
-                Arg::new("zombies")
-                    .short('Z')
-                    .long("zombies")
-                    .help("The number of zombies on the river bank")
-                    .default_value("3")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )
-            .arg(
-                Arg::new("boat")
-                    .short('B')
-                    .long("boat")
-                    .help("The capacity of the boat")
-                    .default_value("2")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )]);
+        .subcommands([
+            Command::new("humans-and-zombies")
+                .about("The Humans and Zombies problem")
+                .arg(
+                    Arg::new("humans")
+                        .short('H')
+                        .long("humans")
+                        .help("The number of humans on the river bank")
+                        .default_value("3")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("zombies")
+                        .short('Z')
+                        .long("zombies")
+                        .help("The number of zombies on the river bank")
+                        .default_value("3")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("boat")
+                        .short('B')
+                        .long("boat")
+                        .help("The capacity of the boat")
+                        .default_value("2")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                ),
+            Command::new("bridge-and-torch").about("The Bridge and Torch problem"),
+        ]);
     command.get_matches()
 }
 
@@ -119,4 +125,10 @@ fn humans_and_zombies(matches: &ArgMatches) -> humans_and_zombies::WorldState {
     let right = RiverBankState::new(0, 0);
     let boat = Boat::new(boat, RiverBank::Left);
     WorldState::new(left, right, boat)
+}
+
+/// Builds the initial state for the Bridge and Torch problem.
+fn bridge_and_torch(_matches: &ArgMatches) -> bridge_and_torch::WorldState {
+    use bridge_and_torch::WorldState;
+    WorldState::default()
 }
