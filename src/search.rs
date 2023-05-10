@@ -1,5 +1,5 @@
 use crate::history::History;
-use crate::strategies::Lifo;
+use crate::strategies::Fifo;
 use std::collections::HashSet;
 use std::fmt::Debug;
 
@@ -74,7 +74,7 @@ where
     let mut history = History::new();
     let lineage = history.create_root(initial_state.clone());
 
-    let mut fringe = Lifo::from(lineage);
+    let mut fringe = Fifo::from(lineage);
     while let Some(lineage) = fringe.pop() {
         let state = &lineage.state;
         println!("Exploring state {}: {:?}", lineage.id, state);

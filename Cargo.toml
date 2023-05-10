@@ -1,6 +1,6 @@
 [package]
 name = "humans-and-zombies"
-version = "0.1.0"
+version = "0.2.0-unstable"
 edition = "2021"
 
 [features]
@@ -8,4 +8,5 @@ default = ["color"]
 color = ["dep:colored"]
 
 [dependencies]
+clap = "4.2.7"
 colored = { version = "2.0.0", optional = true }

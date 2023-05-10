@@ -1,4 +1,4 @@
-use crate::{Action, State};
+use crate::search::{Action, State};
 use std::fmt::{Debug, Formatter};
 
 /// Describes the world state.
@@ -8,8 +8,8 @@ pub struct WorldState {
     pub left: RiverBankState,
     /// The right river bank.
     pub right: RiverBankState,
-    /// The river bank at which the boat is.
-    pub boat: RiverBank,
+    /// The boat.
+    pub boat: Boat,
 }
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -18,6 +18,14 @@ pub enum RiverBank {
     Left,
     /// Right right river bank.
     Right,
+}
+
+#[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+pub struct Boat {
+    /// The capacity of the boat.
+    pub capacity: u8,
+    /// The river bank the boat is at.
+    pub bank: RiverBank,
 }
 
 /// Describes the state on a river bank.
@@ -40,14 +48,14 @@ pub struct WorldAction {
 
 impl WorldState {
     /// Creates a new problem state from the left and right river bank states.
-    pub const fn new(left: RiverBankState, right: RiverBankState, boat: RiverBank) -> Self {
+    pub const fn new(left: RiverBankState, right: RiverBankState, boat: Boat) -> Self {
         Self { left, right, boat }
     }
 
     /// Unpacks the world state into a tuple of "this river bank" (i.e.
     /// the bank that the boat is currently at) and "the opposite river bank".
     pub fn here_there(&self) -> (&RiverBankState, &RiverBankState) {
-        match self.boat {
+        match self.boat.bank {
             RiverBank::Left => (&self.left, &self.right),
             RiverBank::Right => (&self.right, &self.left),
         }
@@ -56,7 +64,7 @@ impl WorldState {
     /// Unpacks the world state into a (mutable) tuple of "this river bank" (i.e.
     /// the bank that the boat is currently at) and "the opposite river bank".
     pub fn here_there_mut(&mut self) -> (&mut RiverBankState, &mut RiverBankState) {
-        match self.boat {
+        match self.boat.bank {
             RiverBank::Left => (&mut self.left, &mut self.right),
             RiverBank::Right => (&mut self.right, &mut self.left),
         }
@@ -64,7 +72,7 @@ impl WorldState {
 
     /// Gets the river bank the boat is at.
     pub fn boat_bank(&self) -> &RiverBankState {
-        match self.boat {
+        match self.boat.bank {
             RiverBank::Left => &self.left,
             RiverBank::Right => &self.right,
         }
@@ -75,7 +83,8 @@ impl Default for WorldState {
     fn default() -> Self {
         let left = RiverBankState::new(3, 3);
         let right = RiverBankState::new(0, 0);
-        WorldState::new(left, right, RiverBank::Left)
+        let boat = Boat::new(2, RiverBank::Left);
+        WorldState::new(left, right, boat)
     }
 }
 
@@ -86,6 +95,18 @@ impl Debug for WorldState {
             "{{ left: {:?}, right: {:?}, boat: {:?} }}",
             self.left, self.right, self.boat
         )
+    }
+}
+
+impl Boat {
+    /// Creates a new river bank state from the number of humans and zombies.
+    pub const fn new(capacity: u8, bank: RiverBank) -> Self {
+        Self { capacity, bank }
+    }
+
+    /// Switches from the left bank to the right and vice versa.
+    pub fn switch_bank(&self) -> Self {
+        Self::new(self.capacity, self.bank.switch_bank())
     }
 }
 
@@ -109,11 +130,9 @@ impl Debug for RiverBankState {
 }
 
 impl WorldAction {
-    pub const fn new(humans: u8, zombies: u8) -> Result<Self, ()> {
-        match zombies + humans {
-            1 | 2 => Ok(Self { zombies, humans }),
-            _ => Err(()),
-        }
+    pub fn new(humans: u8, zombies: u8) -> Self {
+        debug_assert_ne!(zombies + humans, 0);
+        Self { zombies, humans }
     }
 }
 
@@ -149,38 +168,30 @@ impl State for WorldState {
         let mut actions = Vec::with_capacity(5);
 
         let bank = self.boat_bank();
-        if bank.humans >= 2 {
-            let action = WorldAction::new(2, 0).expect("invalid action");
+        for h in 1..=bank.humans.min(self.boat.capacity) {
+            let action = WorldAction::new(h, 0);
             if action.is_applicable(self) {
                 actions.push(action);
             }
         }
 
-        if bank.zombies >= 2 {
-            let action = WorldAction::new(0, 2).expect("invalid action");
+        for z in 1..=bank.zombies.min(self.boat.capacity) {
+            let action = WorldAction::new(0, z);
             if action.is_applicable(self) {
                 actions.push(action);
             }
         }
 
-        if bank.humans >= 1 && bank.zombies >= 1 {
-            let action = WorldAction::new(1, 1).expect("invalid action");
-            if action.is_applicable(self) {
-                actions.push(action);
-            }
-        }
+        for h in 1..=self.boat.capacity.min(bank.humans) {
+            'z: for z in 1..=self.boat.capacity.min(bank.zombies) {
+                if h + z > self.boat.capacity {
+                    break 'z;
+                }
 
-        if bank.humans >= 1 {
-            let action = WorldAction::new(1, 0).expect("invalid action");
-            if action.is_applicable(self) {
-                actions.push(action);
-            }
-        }
-
-        if bank.zombies >= 1 {
-            let action = WorldAction::new(0, 1).expect("invalid action");
-            if action.is_applicable(self) {
-                actions.push(action);
+                let action = WorldAction::new(h, z);
+                if action.is_applicable(self) {
+                    actions.push(action);
+                }
             }
         }
 
@@ -189,7 +200,11 @@ impl State for WorldState {
 
     /// Gets the hash of this state.
     fn unique_hash(&self) -> Self::Hash {
-        let boat = if self.boat == RiverBank::Left { 0 } else { 1 };
+        let boat = if self.boat.bank == RiverBank::Left {
+            0
+        } else {
+            1
+        };
         (self.left.zombies as u32) << 16 | (self.left.humans as u32) << 8 | (boat as u32)
     }
 }
@@ -200,6 +215,11 @@ impl Action for WorldAction {
     /// Tests whether an action is applicable in the given (usually current) world state.
     fn is_applicable(&self, state: &Self::State) -> bool {
         let (here, there) = state.here_there();
+
+        // We cannot have more zombies than humans on the boat.
+        if self.humans > 0 && self.zombies > self.humans {
+            return false;
+        }
 
         // We cannot move more people than there are on the current bank.
         if here.humans < self.humans || here.zombies < self.zombies {
@@ -265,7 +285,7 @@ pub fn pretty_print_state(state: &WorldState) -> String {
     buffer.push_str(&bank.trim());
 
     // River bank.
-    if state.boat == RiverBank::Left {
+    if state.boat.bank == RiverBank::Left {
         buffer.push_str(" |B~~~| ");
     } else {
         buffer.push_str(" |~~~B| ");
@@ -284,8 +304,9 @@ pub fn pretty_print_state(state: &WorldState) -> String {
 
 /// Pretty-prints an action
 pub fn pretty_print_action(action: &WorldAction, state: &WorldState) -> String {
-    let mut buffer = String::from("         ");
-    if state.boat == RiverBank::Left {
+    let at_most = (state.left.humans + state.right.humans) as usize;
+    let mut buffer = String::from(" ".repeat(at_most * 2 + 3));
+    if state.boat.bank == RiverBank::Left {
         buffer.push_str("← ");
     }
     buffer.push_str(&"H".repeat(action.humans as _));
@@ -293,7 +314,7 @@ pub fn pretty_print_action(action: &WorldAction, state: &WorldState) -> String {
         buffer.push(' ');
     }
     buffer.push_str(&"Z".repeat(action.zombies as _));
-    if state.boat == RiverBank::Right {
+    if state.boat.bank == RiverBank::Right {
         buffer.push_str(" →");
     }
 
@@ -309,11 +330,11 @@ mod tests {
         let state = WorldState::new(
             RiverBankState::new(2, 2),
             RiverBankState::new(1, 1),
-            RiverBank::Left,
+            Boat::new(2, RiverBank::Left),
         );
 
-        let action = WorldAction::new(2, 0).expect("valid action");
+        let action = WorldAction::new(2, 0);
 
-        assert!(is_applicable(&action, &state));
+        assert!(action.is_applicable(&state));
     }
 }

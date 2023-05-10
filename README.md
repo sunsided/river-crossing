@@ -13,7 +13,7 @@ The problem statement, paraphrasing Wikipedia, is this:
 > The boat cannot cross the river by itself with no people on board.
 
 See [`humans_and_zombies.rs`](src/humans_and_zombies.rs) for the problem specifics
-and [`search.rs`](src/search.rs) for the search specifics or simply run `cargo run` and observe a solution:
+and [`search.rs`](src/search.rs) for the search specifics or simply run `cargo run -- humans-and-zombies` and observe a solution:
 
 ```
   HHH ZZZ |B~~~|
@@ -39,6 +39,24 @@ and [`search.rs`](src/search.rs) for the search specifics or simply run `cargo r
       H Z |B~~~| HH ZZ
            H Z →
           |~~~B| HHH ZZZ
+```
+
+You can parameterize the problem. To use only two zombies and a boat with capacity four, run e.g.
+
+```
+cargo run -- humans-and-zombies --humans 3 --zombies 2 --boat 4
+```
+
+Which prints a plan like:
+
+```
+   HHH ZZ |B~~~|
+           HHH →
+       ZZ |~~~B| HHH
+           ← HH
+    HH ZZ |B~~~| H
+           HH ZZ →
+          |~~~B| HHH ZZ
 ```
 
 Result plans differ depending on whether a depth-first (LIFO) or
