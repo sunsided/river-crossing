@@ -133,7 +133,7 @@ impl Torch {
 
 impl RiverSideState {
     /// Creates a new river side state from the people.
-    pub const fn new(people: Vec<Person>) -> Self {
+    pub const fn new(mut people: Vec<Person>) -> Self {
         Self { people }
     }
 
@@ -219,8 +219,14 @@ impl State for WorldState {
         // means that out of the people combination [1, 1, 5] minutes each, only [1, 5]
         // would be produced as the outcome for trying either [1] person is the same.
         for c in 1..=self.bridge_capacity {
-            for people in side.people.iter().permutations(c as _).unique() {
-                let action = WorldAction::new(people.into_iter().cloned().collect());
+            for people in side
+                .people
+                .iter()
+                .permutations(c as _)
+                .map(|v| v.into_iter().sorted().cloned().collect_vec())
+                .unique()
+            {
+                let action = WorldAction::new(people);
                 if action.is_applicable(self) {
                     actions.push(action);
                 }
@@ -289,7 +295,7 @@ impl PrettyPrintState for WorldState {
     /// Pretty-prints a world state.
     fn pretty_print(&self) -> String {
         format!(
-            "At {} minute{}: {} on the left, {} on the right",
+            "At {} minute{}: {} on the left, {} on the right (torch: {} minute{})",
             self.time,
             if self.time == 1 { "" } else { "s" },
             if self.left.is_empty() {
@@ -301,7 +307,13 @@ impl PrettyPrintState for WorldState {
                 "nobody".into()
             } else {
                 format!("{:?}", self.right)
-            }
+            },
+            self.torch.remaining_time,
+            if self.torch.remaining_time == 1 {
+                ""
+            } else {
+                "s"
+            },
         )
     }
 }

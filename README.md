@@ -92,17 +92,17 @@ cargo run -- bridge-and-torch
 It prints a solution like the following:
 
 ```
-  At 0 minutes: [<1>, <2>, <5>, <8>] on the left, nobody on the right
+  At 0 minutes: [<1>, <2>, <5>, <8>] on the left, nobody on the right (torch: 15 minutes)
    → [<1>, <2>] cross forward, taking 2 minutes
-  At 2 minutes: [<5>, <8>] on the left, [<1>, <2>] on the right
+  At 2 minutes: [<5>, <8>] on the left, [<1>, <2>] on the right (torch: 13 minutes)
    ← [<1>] returns, taking 1 minute
-  At 3 minutes: [<5>, <8>, <1>] on the left, [<2>] on the right
+  At 3 minutes: [<5>, <8>, <1>] on the left, [<2>] on the right (torch: 12 minutes)
    → [<5>, <8>] cross forward, taking 8 minutes
-  At 11 minutes: [<1>] on the left, [<2>, <5>, <8>] on the right
+  At 11 minutes: [<1>] on the left, [<2>, <5>, <8>] on the right (torch: 4 minutes)
    ← [<2>] returns, taking 2 minutes
-  At 13 minutes: [<1>, <2>] on the left, [<5>, <8>] on the right
+  At 13 minutes: [<1>, <2>] on the left, [<5>, <8>] on the right (torch: 2 minutes)
    → [<1>, <2>] cross forward, taking 2 minutes
-  At 15 minutes: nobody on the left, [<5>, <8>, <1>, <2>] on the right
+  At 15 minutes: nobody on the left, [<5>, <8>, <1>, <2>] on the right (torch: 0 minutes)
 ```
 
 [River crossing]: https://en.wikipedia.org/wiki/River_crossing_puzzle
