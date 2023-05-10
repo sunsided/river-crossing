@@ -1,3 +1,4 @@
+mod bridge_and_torch;
 mod history;
 mod humans_and_zombies;
 mod pretty_print;
@@ -6,14 +7,16 @@ mod strategies;
 
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
 use crate::search::{search, Action, State};
-use clap::{Arg, ArgMatches, Command};
+use clap::{Arg, ArgAction, ArgMatches, Command};
 use colored::Colorize;
+use itertools::Itertools;
 use std::fmt::Debug;
 use std::hash::Hash;
 
 fn main() {
     let solver = match get_matches().subcommand() {
         Some(("humans-and-zombies", matches)) => run_problem(humans_and_zombies(matches)),
+        Some(("bridge-and-torch", matches)) => run_problem(bridge_and_torch(matches)),
         _ => unreachable!("Unhandled subcommand"),
     };
 
@@ -51,40 +54,78 @@ where
 fn get_matches() -> ArgMatches {
     let command = Command::new("toy-planning")
         .subcommand_required(true)
-        .subcommands([Command::new("humans-and-zombies")
-            .arg(
-                Arg::new("humans")
-                    .short('H')
-                    .long("humans")
-                    .help("The number of humans on the river bank")
-                    .default_value("3")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )
-            .arg(
-                Arg::new("zombies")
-                    .short('Z')
-                    .long("zombies")
-                    .help("The number of zombies on the river bank")
-                    .default_value("3")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )
-            .arg(
-                Arg::new("boat")
-                    .short('B')
-                    .long("boat")
-                    .help("The capacity of the boat")
-                    .default_value("2")
-                    .value_name("COUNT")
-                    .value_parser(parse_nonzero_u8)
-                    .allow_negative_numbers(false)
-                    .num_args(1),
-            )]);
+        .subcommands([
+            Command::new("humans-and-zombies")
+                .about("The Humans and Zombies problem")
+                .arg(
+                    Arg::new("humans")
+                        .short('H')
+                        .long("humans")
+                        .help("The number of humans on the river bank")
+                        .default_value("3")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("zombies")
+                        .short('Z')
+                        .long("zombies")
+                        .help("The number of zombies on the river bank")
+                        .default_value("3")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("boat")
+                        .short('B')
+                        .long("boat")
+                        .help("The capacity of the boat")
+                        .default_value("2")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                ),
+            Command::new("bridge-and-torch")
+                .about("The Bridge and Torch problem")
+                .arg(
+                    Arg::new("bridge")
+                        .short('B')
+                        .long("bridge")
+                        .help("The capacity of the bridge")
+                        .default_value("2")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("torch")
+                        .short('T')
+                        .long("torch")
+                        .help("The capacity of the torch, i.e. how long it will burn")
+                        .default_value("15")
+                        .value_name("MINUTES")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("people")
+                        .short('P')
+                        .long("person")
+                        .help("The walking time of a person to add to the problem")
+                        .value_name("MINUTES")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .action(ArgAction::Append)
+                        .num_args(1..),
+                ),
+        ]);
     command.get_matches()
 }
 
@@ -119,4 +160,32 @@ fn humans_and_zombies(matches: &ArgMatches) -> humans_and_zombies::WorldState {
     let right = RiverBankState::new(0, 0);
     let boat = Boat::new(boat, RiverBank::Left);
     WorldState::new(left, right, boat)
+}
+
+/// Builds the initial state for the Bridge and Torch problem.
+fn bridge_and_torch(matches: &ArgMatches) -> bridge_and_torch::WorldState {
+    use bridge_and_torch::{Person, RiverSide, RiverSideState, Torch, WorldState};
+
+    let bridge = matches
+        .get_one::<u8>("bridge")
+        .cloned()
+        .expect("value is required");
+    let torch = matches
+        .get_one::<u8>("torch")
+        .cloned()
+        .expect("value is required");
+    let people = matches.get_many::<u8>("people").map_or(
+        vec![
+            Person::new(1),
+            Person::new(2),
+            Person::new(5),
+            Person::new(8),
+        ],
+        |values| values.into_iter().cloned().map(Person::new).collect_vec(),
+    );
+
+    let left = RiverSideState::new(people);
+    let right = RiverSideState::new(vec![]);
+    let torch = Torch::new(torch, RiverSide::Left);
+    WorldState::new(left, right, torch, 0, bridge)
 }
