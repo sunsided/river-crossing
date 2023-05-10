@@ -1,5 +1,5 @@
 use crate::history::History;
-use crate::strategies::{Fifo, Lifo};
+use crate::strategies::Fifo;
 use std::collections::HashSet;
 use std::fmt::Debug;
 

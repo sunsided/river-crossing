@@ -333,8 +333,8 @@ mod tests {
             Boat::new(2, RiverBank::Left),
         );
 
-        let action = WorldAction::new(2, 0).expect("valid action");
+        let action = WorldAction::new(2, 0);
 
-        assert!(is_applicable(&action, &state));
+        assert!(action.is_applicable(&state));
     }
 }
