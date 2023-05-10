@@ -30,7 +30,7 @@ pub enum RiverSide {
 pub struct Torch {
     /// The location of the torch.
     pub side: RiverSide,
-    /// The remaining time the fuel can burn.
+    /// The remaining time the torch can be used.
     pub remaining_time: u8,
 }
 
