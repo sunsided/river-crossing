@@ -1,12 +1,37 @@
 mod history;
 mod humans_and_zombies;
+mod pretty_print;
 mod search;
 mod strategies;
 
-use crate::humans_and_zombies::{Boat, RiverBank, RiverBankState};
+use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
 use crate::search::search;
 use clap::{Arg, ArgMatches, Command};
 use colored::Colorize;
+
+fn main() {
+    // TODO: Refactor to Box<dyn State>
+    let initial_state = build_initial_state();
+    if let Some(history) = search(initial_state) {
+        println!("\nSolution:\n");
+        for (action, state) in history {
+            if let Some(action) = action {
+                println!("  {}", action.pretty_print(&state).yellow());
+            }
+
+            println!("  {}", state.pretty_print());
+        }
+    } else {
+        eprintln!("No solution found.");
+    }
+}
+
+fn build_initial_state() -> humans_and_zombies::WorldState {
+    match get_matches().subcommand() {
+        Some(("humans-and-zombies", matches)) => build_humans_zombies_state(matches),
+        _ => unreachable!("Unhandled subcommand"),
+    }
+}
 
 fn get_matches() -> ArgMatches {
     let command = Command::new("toy-planning")
@@ -57,45 +82,25 @@ fn parse_nonzero_u8(value: &str) -> Result<u8, String> {
     }
 }
 
-fn main() {
-    use humans_and_zombies::{pretty_print_action, pretty_print_state, WorldState};
+/// Builds the initial state
+fn build_humans_zombies_state(matches: &ArgMatches) -> humans_and_zombies::WorldState {
+    use humans_and_zombies::{Boat, RiverBank, RiverBankState, WorldState};
 
-    let initial_state = match get_matches().subcommand() {
-        Some(("humans-and-zombies", matches)) => {
-            let humans = matches
-                .get_one::<u8>("humans")
-                .cloned()
-                .expect("value is required");
-            let zombies = matches
-                .get_one::<u8>("zombies")
-                .cloned()
-                .expect("value is required");
-            let boat = matches
-                .get_one::<u8>("boat")
-                .cloned()
-                .expect("value is required");
+    let humans = matches
+        .get_one::<u8>("humans")
+        .cloned()
+        .expect("value is required");
+    let zombies = matches
+        .get_one::<u8>("zombies")
+        .cloned()
+        .expect("value is required");
+    let boat = matches
+        .get_one::<u8>("boat")
+        .cloned()
+        .expect("value is required");
 
-            let left = RiverBankState::new(humans, zombies);
-            let right = RiverBankState::new(0, 0);
-            let boat = Boat::new(boat, RiverBank::Left);
-            WorldState::new(left, right, boat)
-        }
-        _ => {
-            unreachable!("Unhandled subcommand")
-        }
-    };
-
-    // TODO: Refactor this part with pretty-printing.
-    if let Some(history) = search(initial_state) {
-        println!("\nSolution:\n");
-        for (action, state) in history {
-            if let Some(action) = action {
-                println!("  {}", pretty_print_action(&action, &state).yellow());
-            }
-
-            println!("  {}", pretty_print_state(&state));
-        }
-    } else {
-        eprintln!("No solution found.");
-    }
+    let left = RiverBankState::new(humans, zombies);
+    let right = RiverBankState::new(0, 0);
+    let boat = Boat::new(boat, RiverBank::Left);
+    WorldState::new(left, right, boat)
 }
