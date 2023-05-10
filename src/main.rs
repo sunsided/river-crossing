@@ -5,32 +5,46 @@ mod search;
 mod strategies;
 
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
-use crate::search::search;
+use crate::search::{search, Action, State};
 use clap::{Arg, ArgMatches, Command};
 use colored::Colorize;
+use std::fmt::Debug;
+use std::hash::Hash;
 
 fn main() {
-    // TODO: Refactor to Box<dyn State>
-    let initial_state = build_initial_state();
-    if let Some(history) = search(initial_state) {
-        println!("\nSolution:\n");
-        for (action, state) in history {
-            if let Some(action) = action {
-                println!("  {}", action.pretty_print(&state).yellow());
-            }
+    let solver = match get_matches().subcommand() {
+        Some(("humans-and-zombies", matches)) => run_problem(build_humans_zombies_state(matches)),
+        _ => unreachable!("Unhandled subcommand"),
+    };
 
-            println!("  {}", state.pretty_print());
-        }
-    } else {
-        eprintln!("No solution found.");
-    }
+    solver();
 }
 
-fn build_initial_state() -> humans_and_zombies::WorldState {
-    match get_matches().subcommand() {
-        Some(("humans-and-zombies", matches)) => build_humans_zombies_state(matches),
-        _ => unreachable!("Unhandled subcommand"),
-    }
+/// Wraps the selected problem's initial state into a function that
+/// searches and prints the solution.
+///
+/// This is a bit of a hacky solution but works around the cyclic
+/// dependencies of associated types on the State and Action traits.
+fn run_problem<S, A>(initial_state: S) -> Box<dyn FnOnce() -> ()>
+where
+    S: State<Action = A> + Clone + Debug + PrettyPrintState + 'static,
+    A: Action<State = S> + Clone + Debug + PrettyPrintAction<S>,
+    S::Hash: Eq + Hash,
+{
+    Box::new(move || {
+        if let Some(history) = search(initial_state) {
+            println!("\nSolution:\n");
+            for (action, state) in history {
+                if let Some(action) = action {
+                    println!("  {}", action.pretty_print(&state).yellow());
+                }
+
+                println!("  {}", state.pretty_print());
+            }
+        } else {
+            eprintln!("No solution found.");
+        }
+    })
 }
 
 fn get_matches() -> ArgMatches {
