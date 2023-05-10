@@ -1,4 +1,7 @@
 # Toy Planning: "Humans and Zombies"
+_Nᴏᴡ ᴡɪᴛʜ x﹪ ᴍᴏʀᴇ ᴢᴏᴍʙɪᴇs﹗_
+
+---
 
 An implementation of search-based planning using the Humans and Zombies problem,
 a version of the [river crossing] problem without the racism of "[Missionaries and Cannibals]"
