@@ -17,7 +17,7 @@ pub struct WorldState {
 pub enum RiverBank {
     /// The left river bank.
     Left,
-    /// Right right river bank.
+    /// The right river bank.
     Right,
 }
 
