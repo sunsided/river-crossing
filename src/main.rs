@@ -13,7 +13,7 @@ use std::hash::Hash;
 
 fn main() {
     let solver = match get_matches().subcommand() {
-        Some(("humans-and-zombies", matches)) => run_problem(build_humans_zombies_state(matches)),
+        Some(("humans-and-zombies", matches)) => run_problem(humans_and_zombies(matches)),
         _ => unreachable!("Unhandled subcommand"),
     };
 
@@ -47,6 +47,7 @@ where
     })
 }
 
+/// Obtains the matches for the command-line arguments.
 fn get_matches() -> ArgMatches {
     let command = Command::new("toy-planning")
         .subcommand_required(true)
@@ -87,6 +88,7 @@ fn get_matches() -> ArgMatches {
     command.get_matches()
 }
 
+/// Value parser for [`get_matches`] that attempts to read an [`u8`] value.
 fn parse_nonzero_u8(value: &str) -> Result<u8, String> {
     let value = value.parse().map_err(|e| format!("{e:?}"))?;
     if value == 0 {
@@ -96,8 +98,8 @@ fn parse_nonzero_u8(value: &str) -> Result<u8, String> {
     }
 }
 
-/// Builds the initial state
-fn build_humans_zombies_state(matches: &ArgMatches) -> humans_and_zombies::WorldState {
+/// Builds the initial state for the Humans and Zombies problem.
+fn humans_and_zombies(matches: &ArgMatches) -> humans_and_zombies::WorldState {
     use humans_and_zombies::{Boat, RiverBank, RiverBankState, WorldState};
 
     let humans = matches
