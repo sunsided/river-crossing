@@ -133,7 +133,7 @@ impl Torch {
 
 impl RiverSideState {
     /// Creates a new river side state from the people.
-    pub const fn new(mut people: Vec<Person>) -> Self {
+    pub const fn new(people: Vec<Person>) -> Self {
         Self { people }
     }
 

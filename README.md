@@ -83,10 +83,11 @@ The [Bridge and Torch] problem works as follows:
 > 
 > The question is, can they all get across the bridge if the torch lasts only 15 minutes?
 
-To solve the problem, run:
+To solve the problem, run either of these equivalent commands;
 
 ```
 cargo run -- bridge-and-torch
+cargo run -- bridge-and-torch --bridge 2 --torch 15 --person 1 --person 2 --person 5 --person 8
 ```
 
 It prints a solution like the following:

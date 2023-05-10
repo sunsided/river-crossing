@@ -5,11 +5,11 @@ mod pretty_print;
 mod search;
 mod strategies;
 
-use crate::bridge_and_torch::RiverSideState;
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
 use crate::search::{search, Action, State};
-use clap::{Arg, ArgMatches, Command};
+use clap::{Arg, ArgAction, ArgMatches, Command};
 use colored::Colorize;
+use itertools::Itertools;
 use std::fmt::Debug;
 use std::hash::Hash;
 
@@ -113,6 +113,17 @@ fn get_matches() -> ArgMatches {
                         .value_parser(parse_nonzero_u8)
                         .allow_negative_numbers(false)
                         .num_args(1),
+                )
+                .arg(
+                    Arg::new("people")
+                        .short('P')
+                        .long("person")
+                        .help("The walking time of a person to add to the problem")
+                        .value_name("MINUTES")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .action(ArgAction::Append)
+                        .num_args(1..),
                 ),
         ]);
     command.get_matches()
@@ -163,13 +174,17 @@ fn bridge_and_torch(matches: &ArgMatches) -> bridge_and_torch::WorldState {
         .get_one::<u8>("torch")
         .cloned()
         .expect("value is required");
+    let people = matches.get_many::<u8>("people").map_or(
+        vec![
+            Person::new(1),
+            Person::new(2),
+            Person::new(5),
+            Person::new(8),
+        ],
+        |values| values.into_iter().cloned().map(Person::new).collect_vec(),
+    );
 
-    let left = RiverSideState::new(vec![
-        Person::new(1),
-        Person::new(2),
-        Person::new(5),
-        Person::new(8),
-    ]);
+    let left = RiverSideState::new(people);
     let right = RiverSideState::new(vec![]);
     let torch = Torch::new(torch, RiverSide::Left);
     WorldState::new(left, right, torch, 0, bridge)
