@@ -1,3 +1,4 @@
+use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
 use crate::search::{Action, State};
 use std::fmt::{Debug, Formatter};
 
@@ -251,67 +252,69 @@ impl Action for WorldAction {
     }
 }
 
-/// Pretty-prints a world state.
-pub fn pretty_print_state(state: &WorldState) -> String {
-    let at_most = (state.left.humans + state.right.humans) as usize;
+impl PrettyPrintState for WorldState {
+    /// Pretty-prints a world state.
+    fn pretty_print(&self) -> String {
+        let at_most = (self.left.humans + self.right.humans) as usize;
 
-    let mut buffer = String::new();
+        let mut buffer = String::new();
 
-    const HUMAN: &'static str = "H";
-    const ZOMBIE: &'static str = "Z";
+        const HUMAN: &'static str = "H";
+        const ZOMBIE: &'static str = "Z";
 
-    // Left bank.
-    let mut bank = String::new();
-    bank.push_str(&HUMAN.repeat(state.left.humans as _));
-    bank.push(' ');
-    bank.push_str(&ZOMBIE.repeat(state.left.zombies as _));
-    let padding = if state.left.humans == 0 || state.left.zombies == 0 {
-        1
-    } else {
-        0
-    };
-    buffer.push_str(
-        &" ".repeat(
-            2 * at_most - state.left.humans as usize - state.left.zombies as usize + padding,
-        ),
-    );
-    buffer.push_str(&bank.trim());
+        // Left bank.
+        let mut bank = String::new();
+        bank.push_str(&HUMAN.repeat(self.left.humans as _));
+        bank.push(' ');
+        bank.push_str(&ZOMBIE.repeat(self.left.zombies as _));
+        let padding = if self.left.humans == 0 || self.left.zombies == 0 {
+            1
+        } else {
+            0
+        };
+        buffer.push_str(&" ".repeat(
+            2 * at_most - self.left.humans as usize - self.left.zombies as usize + padding,
+        ));
+        buffer.push_str(&bank.trim());
 
-    // River bank.
-    if state.boat.bank == RiverBank::Left {
-        buffer.push_str(" |B~~~| ");
-    } else {
-        buffer.push_str(" |~~~B| ");
+        // River bank.
+        if self.boat.bank == RiverBank::Left {
+            buffer.push_str(" |B~~~| ");
+        } else {
+            buffer.push_str(" |~~~B| ");
+        }
+
+        // Right bank.
+        let mut bank = String::new();
+        bank.push_str(&" ".repeat(at_most - self.right.humans as usize));
+        bank.push_str(&HUMAN.repeat(self.right.humans as _));
+        bank.push(' ');
+        bank.push_str(&ZOMBIE.repeat(self.right.zombies as _));
+        buffer.push_str(&bank.trim());
+
+        buffer.trim_end().into()
     }
-
-    // Right bank.
-    let mut bank = String::new();
-    bank.push_str(&" ".repeat(at_most - state.right.humans as usize));
-    bank.push_str(&HUMAN.repeat(state.right.humans as _));
-    bank.push(' ');
-    bank.push_str(&ZOMBIE.repeat(state.right.zombies as _));
-    buffer.push_str(&bank.trim());
-
-    buffer.trim_end().into()
 }
 
-/// Pretty-prints an action
-pub fn pretty_print_action(action: &WorldAction, state: &WorldState) -> String {
-    let at_most = (state.left.humans + state.right.humans) as usize;
-    let mut buffer = String::from(" ".repeat(at_most * 2 + 3));
-    if state.boat.bank == RiverBank::Left {
-        buffer.push_str("← ");
-    }
-    buffer.push_str(&"H".repeat(action.humans as _));
-    if action.humans > 0 && action.zombies > 0 {
-        buffer.push(' ');
-    }
-    buffer.push_str(&"Z".repeat(action.zombies as _));
-    if state.boat.bank == RiverBank::Right {
-        buffer.push_str(" →");
-    }
+impl PrettyPrintAction<WorldState> for WorldAction {
+    /// Pretty-prints an action
+    fn pretty_print(&self, state: &WorldState) -> String {
+        let at_most = (state.left.humans + state.right.humans) as usize;
+        let mut buffer = String::from(" ".repeat(at_most * 2 + 3));
+        if state.boat.bank == RiverBank::Left {
+            buffer.push_str("← ");
+        }
+        buffer.push_str(&"H".repeat(self.humans as _));
+        if self.humans > 0 && self.zombies > 0 {
+            buffer.push(' ');
+        }
+        buffer.push_str(&"Z".repeat(self.zombies as _));
+        if state.boat.bank == RiverBank::Right {
+            buffer.push_str(" →");
+        }
 
-    buffer
+        buffer
+    }
 }
 
 #[cfg(test)]
