@@ -58,11 +58,10 @@ fn parse_nonzero_u8(value: &str) -> Result<u8, String> {
 }
 
 fn main() {
-    let matches = get_matches();
-    match matches.subcommand() {
-        Some(("humans-and-zombies", matches)) => {
-            use humans_and_zombies::{pretty_print_action, pretty_print_state, WorldState};
+    use humans_and_zombies::{pretty_print_action, pretty_print_state, WorldState};
 
+    let initial_state = match get_matches().subcommand() {
+        Some(("humans-and-zombies", matches)) => {
             let humans = matches
                 .get_one::<u8>("humans")
                 .cloned()
@@ -79,21 +78,24 @@ fn main() {
             let left = RiverBankState::new(humans, zombies);
             let right = RiverBankState::new(0, 0);
             let boat = Boat::new(boat, RiverBank::Left);
-            let initial_state = WorldState::new(left, right, boat);
-
-            if let Some(history) = search(initial_state) {
-                println!("\nSolution:\n");
-                for (action, state) in history {
-                    if let Some(action) = action {
-                        println!("  {}", pretty_print_action(&action, &state).yellow());
-                    }
-
-                    println!("  {}", pretty_print_state(&state));
-                }
-            } else {
-                eprintln!("No solution found.");
-            }
+            WorldState::new(left, right, boat)
         }
-        _ => {}
+        _ => {
+            unreachable!("Unhandled subcommand")
+        }
+    };
+
+    // TODO: Refactor this part with pretty-printing.
+    if let Some(history) = search(initial_state) {
+        println!("\nSolution:\n");
+        for (action, state) in history {
+            if let Some(action) = action {
+                println!("  {}", pretty_print_action(&action, &state).yellow());
+            }
+
+            println!("  {}", pretty_print_state(&state));
+        }
+    } else {
+        eprintln!("No solution found.");
     }
 }
