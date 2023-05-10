@@ -207,7 +207,7 @@ impl State for WorldState {
 
         // Move each person over individually.
         //
-        // We could optimize this by only emitting these actions when we are on
+        // We could optimize this by only emitting 1-person moves when we are on
         // the right river side, as it would generally make no sense for
         // an individual person to cross left to right since it would have to be the
         // same person to bring the torch back. The exception to the rule would
