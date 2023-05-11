@@ -1,11 +1,11 @@
-mod bridge_and_torch;
 mod history;
-mod humans_and_zombies;
 mod pretty_print;
+mod problems;
 mod search;
 mod strategies;
 
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
+use crate::problems::{bridge_and_torch, humans_and_zombies};
 use crate::search::{search, Action, State};
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use colored::Colorize;

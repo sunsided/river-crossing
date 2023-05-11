@@ -21,7 +21,7 @@ The [Bridge and Torch] problem works as follows:
 >
 > The question is, can they all get across the bridge if the torch lasts only 15 minutes?
 
-The problem specifics are encoded in [`bridge_and_torch.rs`](src/bridge_and_torch.rs).
+The problem specifics are encoded in [`bridge_and_torch.rs`](src/problems/bridge_and_torch.rs).
 To solve the problem, run either of these equivalent commands;
 
 ```
@@ -58,7 +58,7 @@ The problem statement, paraphrasing Wikipedia, is this:
 > (if they were, the zombies would eat the humans).
 > The boat cannot cross the river by itself with no people on board.
 
-See [`humans_and_zombies.rs`](src/humans_and_zombies.rs) for the problem specifics or
+See [`humans_and_zombies.rs`](src/problems/humans_and_zombies.rs) for the problem specifics or
 simply run `cargo run -- humans-and-zombies` and observe a solution:
 
 ```
