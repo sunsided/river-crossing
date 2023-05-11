@@ -45,6 +45,48 @@ It prints a solution like the following:
   At 15 minutes: nobody on the left, [<5>, <8>, <1>, <2>] on the right (torch: 0 minutes)
 ```
 
+## 🐺+🐐+🥬 — The Wolf, Goat and Cabbage Problem
+
+The [Wolf, Goat and Cabbage] problem works as follows:
+
+> A farmer went to a market and purchased a wolf, a goat, and a cabbage. 
+> On his way home, the farmer came to the bank of a river and rented a boat.
+> But crossing the river by boat, the farmer could carry only himself and a
+> single one of his purchases: the wolf, the goat, or the cabbage.
+>
+> If left unattended together, the wolf would eat the goat, or the goat would eat the cabbage.
+> 
+> The farmer's challenge was to carry himself and his purchases to the far
+> bank of the river, leaving each purchase intact.
+
+The problem specifics are encoded in [`wolf_goat_cabbage.rs`](src/problems/wolf_goat_cabbage.rs).
+To solve the problem, run either of these equivalent commands;
+
+```
+cargo run -- wolf-goat-cabbage
+cargo run -- wolf-goat-cabbage --boat 2 --farmers 1 --wolves 1 --goats 1 --cabbage 1
+```
+
+It prints a solution like the following:
+
+```
+  At t=0; left bank: [farmer, wolf, goat, cabbage], right bank: [nothing]
+   → farmer, goat cross forward
+  At t=1; left bank: [wolf, cabbage], right bank: [farmer, goat]
+   ← farmer returns alone
+  At t=2; left bank: [farmer, wolf, cabbage], right bank: [goat]
+   → farmer, cabbage cross forward
+  At t=3; left bank: [wolf], right bank: [farmer, goat, cabbage]
+   ← farmer, goat return
+  At t=4; left bank: [farmer, wolf, goat], right bank: [cabbage]
+   → farmer, wolf cross forward
+  At t=5; left bank: [goat], right bank: [farmer, wolf, cabbage]
+   ← farmer returns alone
+  At t=6; left bank: [farmer, goat], right bank: [wolf, cabbage]
+   → farmer, goat cross forward
+  At t=7; left bank: [nothing], right bank: [farmer, wolf, goat, cabbage]
+```
+
 ## 🙎+🧟‍ — The Humans and Zombies Problem
 
 This is the Humans and Zombies problem, a classic version of the river crossing problem without
@@ -111,3 +153,4 @@ breadth-first (FIFO) search is used.
 [River crossing]: https://en.wikipedia.org/wiki/River_crossing_puzzle
 [Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem
 [Bridge and Torch]: https://en.wikipedia.org/wiki/Bridge_and_torch_problem
+[Wolf, Goat and Cabbage]: https://en.wikipedia.org/wiki/Wolf,_goat_and_cabbage_problem

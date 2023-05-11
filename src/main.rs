@@ -5,7 +5,7 @@ mod search;
 mod strategies;
 
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
-use crate::problems::{bridge_and_torch, humans_and_zombies};
+use crate::problems::{bridge_and_torch, humans_and_zombies, wolf_goat_cabbage};
 use crate::search::{search, Action, State};
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use colored::Colorize;
@@ -17,6 +17,7 @@ fn main() {
     let solver = match get_matches().subcommand() {
         Some(("humans-and-zombies", matches)) => run_problem(humans_and_zombies(matches)),
         Some(("bridge-and-torch", matches)) => run_problem(bridge_and_torch(matches)),
+        Some(("wolf-goat-cabbage", matches)) => run_problem(wolf_goat_cabbage(matches)),
         _ => unreachable!("Unhandled subcommand"),
     };
 
@@ -125,6 +126,63 @@ fn get_matches() -> ArgMatches {
                         .action(ArgAction::Append)
                         .num_args(1..),
                 ),
+            Command::new("wolf-goat-cabbage")
+                .about("The Wolves, Goats and Cabbages problem")
+                .arg(
+                    Arg::new("farmers")
+                        .short('F')
+                        .long("farmers")
+                        .help("The number of farmers on the river bank")
+                        .default_value("1")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("wolves")
+                        .short('W')
+                        .long("wolves")
+                        .help("The number of wolves on the river bank")
+                        .default_value("1")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("goats")
+                        .short('G')
+                        .long("goats")
+                        .help("The number of goats on the river bank")
+                        .default_value("1")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("cabbages")
+                        .short('C')
+                        .long("cabbages")
+                        .help("The number of cabbages on the river bank")
+                        .default_value("1")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("boat")
+                        .short('B')
+                        .long("boat")
+                        .help("The capacity of the boat")
+                        .default_value("2")
+                        .value_name("COUNT")
+                        .value_parser(parse_nonzero_u8)
+                        .allow_negative_numbers(false)
+                        .num_args(1),
+                ),
         ]);
     command.get_matches()
 }
@@ -188,4 +246,35 @@ fn bridge_and_torch(matches: &ArgMatches) -> bridge_and_torch::WorldState {
     let right = RiverSideState::new(vec![]);
     let torch = Torch::new(torch, RiverSide::Left);
     WorldState::new(left, right, torch, 0, bridge)
+}
+
+/// Builds the initial state for the Humans and Zombies problem.
+fn wolf_goat_cabbage(matches: &ArgMatches) -> wolf_goat_cabbage::WorldState {
+    use wolf_goat_cabbage::{Boat, RiverBank, RiverBankState, WorldState};
+
+    let farmers = matches
+        .get_one::<u8>("farmers")
+        .cloned()
+        .expect("value is required");
+    let wolves = matches
+        .get_one::<u8>("wolves")
+        .cloned()
+        .expect("value is required");
+    let goats = matches
+        .get_one::<u8>("goats")
+        .cloned()
+        .expect("value is required");
+    let cabbages = matches
+        .get_one::<u8>("cabbages")
+        .cloned()
+        .expect("value is required");
+    let boat = matches
+        .get_one::<u8>("boat")
+        .cloned()
+        .expect("value is required");
+
+    let left = RiverBankState::new(farmers, wolves, goats, cabbages);
+    let right = RiverBankState::new(0, 0, 0, 0);
+    let boat = Boat::new(boat, RiverBank::Left);
+    WorldState::new(0, left, right, boat)
 }
