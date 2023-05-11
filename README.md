@@ -70,21 +70,21 @@ cargo run -- wolf-goat-cabbage --boat 2 --farmers 1 --wolves 1 --goats 1 --cabba
 It prints a solution like the following:
 
 ```
-  At t=0; left bank: [farmer, wolf, goat, cabbage], right bank: [nothing]
-   → farmer, goat cross forward
-  At t=1; left bank: [wolf, cabbage], right bank: [farmer, goat]
+  At t=0; left bank: farmer, wolf, goat and cabbage; right bank: empty
+   → farmer and goat cross forward
+  At t=1; left bank: wolf and cabbage; right bank: farmer and goat
    ← farmer returns alone
-  At t=2; left bank: [farmer, wolf, cabbage], right bank: [goat]
-   → farmer, cabbage cross forward
-  At t=3; left bank: [wolf], right bank: [farmer, goat, cabbage]
-   ← farmer, goat return
-  At t=4; left bank: [farmer, wolf, goat], right bank: [cabbage]
-   → farmer, wolf cross forward
-  At t=5; left bank: [goat], right bank: [farmer, wolf, cabbage]
+  At t=2; left bank: farmer, wolf and cabbage; right bank: goat
+   → farmer and cabbage cross forward
+  At t=3; left bank: wolf; right bank: farmer, goat and cabbage
+   ← farmer and goat return
+  At t=4; left bank: farmer, wolf and goat; right bank: cabbage
+   → farmer and wolf cross forward
+  At t=5; left bank: goat; right bank: farmer, wolf and cabbage
    ← farmer returns alone
-  At t=6; left bank: [farmer, goat], right bank: [wolf, cabbage]
-   → farmer, goat cross forward
-  At t=7; left bank: [nothing], right bank: [farmer, wolf, goat, cabbage]
+  At t=6; left bank: farmer and goat; right bank: wolf and cabbage
+   → farmer and goat cross forward
+  At t=7; left bank: empty; right bank: farmer, wolf, goat and cabbage
 ```
 
 ## 🙎+🧟‍ — The Humans and Zombies Problem

@@ -1,5 +1,6 @@
 use crate::pretty_print::{PrettyPrintAction, PrettyPrintState};
 use crate::search::{Action, State};
+use itertools::Itertools;
 use std::fmt::{Debug, Formatter};
 
 /// Describes the world state.
@@ -331,7 +332,7 @@ impl PrettyPrintState for WorldState {
     /// Pretty-prints a world state.
     fn pretty_print(&self) -> String {
         format!(
-            "At t={}; left bank: [{}], right bank: [{}]",
+            "At t={}; left bank: {}; right bank: {}",
             self.plan_depth,
             readable_bank(&self.left),
             readable_bank(&self.right)
@@ -398,8 +399,22 @@ fn readable_list(farmers: u8, wolves: u8, goats: u8, cabbages: u8) -> String {
     }
 
     if parts.is_empty() {
-        return String::from("nothing");
+        return String::from("empty");
     }
 
-    parts.join(", ")
+    // Intersperse the parts with "," and "and".
+    let num_parts = parts.len();
+    parts
+        .into_iter()
+        .enumerate()
+        .map(|(idx, e)| {
+            if idx == 0 {
+                e
+            } else if idx == num_parts - 1 {
+                format!(" and {e}")
+            } else {
+                format!(", {e}")
+            }
+        })
+        .join("")
 }
