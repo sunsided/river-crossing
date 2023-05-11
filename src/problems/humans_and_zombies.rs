@@ -170,8 +170,8 @@ impl State for WorldState {
 
         let bank = self.boat_bank();
 
-        for z in 0..=self.boat.capacity.min(bank.zombies) {
-            'h: for h in 0..=self.boat.capacity.min(bank.humans) {
+        for z in 0..=bank.zombies.min(self.boat.capacity) {
+            'h: for h in 0..=bank.humans.min(self.boat.capacity) {
                 // At least one person needs to be on the boat.
                 if h + z == 0 {
                     continue;

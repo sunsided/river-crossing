@@ -21,7 +21,7 @@ The [Bridge and Torch] problem works as follows:
 >
 > The question is, can they all get across the bridge if the torch lasts only 15 minutes?
 
-The problem specifics are encoded in [`bridge_and_torch.rs`](src/bridge_and_torch.rs).
+The problem specifics are encoded in [`bridge_and_torch.rs`](src/problems/bridge_and_torch.rs).
 To solve the problem, run either of these equivalent commands;
 
 ```
@@ -45,6 +45,48 @@ It prints a solution like the following:
   At 15 minutes: nobody on the left, [<5>, <8>, <1>, <2>] on the right (torch: 0 minutes)
 ```
 
+## 🐺+🐐+🥬 — The Wolf, Goat and Cabbage Problem
+
+The [Wolf, Goat and Cabbage] problem works as follows:
+
+> A farmer went to a market and purchased a wolf, a goat, and a cabbage. 
+> On his way home, the farmer came to the bank of a river and rented a boat.
+> But crossing the river by boat, the farmer could carry only himself and a
+> single one of his purchases: the wolf, the goat, or the cabbage.
+>
+> If left unattended together, the wolf would eat the goat, or the goat would eat the cabbage.
+> 
+> The farmer's challenge was to carry himself and his purchases to the far
+> bank of the river, leaving each purchase intact.
+
+The problem specifics are encoded in [`wolf_goat_cabbage.rs`](src/problems/wolf_goat_cabbage.rs).
+To solve the problem, run either of these equivalent commands;
+
+```
+cargo run -- wolf-goat-cabbage
+cargo run -- wolf-goat-cabbage --boat 2 --farmers 1 --wolves 1 --goats 1 --cabbage 1
+```
+
+It prints a solution like the following:
+
+```
+  At t=0; left bank: farmer, wolf, goat and cabbage; right bank: empty
+   → farmer and goat cross forward
+  At t=1; left bank: wolf and cabbage; right bank: farmer and goat
+   ← farmer returns alone
+  At t=2; left bank: farmer, wolf and cabbage; right bank: goat
+   → farmer and cabbage cross forward
+  At t=3; left bank: wolf; right bank: farmer, goat and cabbage
+   ← farmer and goat return
+  At t=4; left bank: farmer, wolf and goat; right bank: cabbage
+   → farmer and wolf cross forward
+  At t=5; left bank: goat; right bank: farmer, wolf and cabbage
+   ← farmer returns alone
+  At t=6; left bank: farmer and goat; right bank: wolf and cabbage
+   → farmer and goat cross forward
+  At t=7; left bank: empty; right bank: farmer, wolf, goat and cabbage
+```
+
 ## 🙎+🧟‍ — The Humans and Zombies Problem
 
 This is the Humans and Zombies problem, a classic version of the river crossing problem without
@@ -58,7 +100,7 @@ The problem statement, paraphrasing Wikipedia, is this:
 > (if they were, the zombies would eat the humans).
 > The boat cannot cross the river by itself with no people on board.
 
-See [`humans_and_zombies.rs`](src/humans_and_zombies.rs) for the problem specifics or
+See [`humans_and_zombies.rs`](src/problems/humans_and_zombies.rs) for the problem specifics or
 simply run `cargo run -- humans-and-zombies` and observe a solution:
 
 ```
@@ -111,3 +153,4 @@ breadth-first (FIFO) search is used.
 [River crossing]: https://en.wikipedia.org/wiki/River_crossing_puzzle
 [Missionaries and Cannibals]: https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem
 [Bridge and Torch]: https://en.wikipedia.org/wiki/Bridge_and_torch_problem
+[Wolf, Goat and Cabbage]: https://en.wikipedia.org/wiki/Wolf,_goat_and_cabbage_problem

@@ -9,6 +9,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added command-line arguments to application.
 - Added the Bridge and Torch problem via the `bridge-and-torch` subcommand.
+- Added the Wolf, Goat and Cabbage problem via the `wolf-goat-cabbage` subcommand.
 
 ### Changed
 
